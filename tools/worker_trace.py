@@ -25,7 +25,9 @@ def execute(root, files, test, fn, args, kwargs):
 
 
 def flush(files):
-    _profiler.monitor.free_tool_id(_profiler.tool)
+    from type_trace import guards_only
+    if not guards_only:
+        _profiler.monitor.free_tool_id(_profiler.tool)
     _profiler.dump(files / f"{os.getpid()}.json.gz")
 
 

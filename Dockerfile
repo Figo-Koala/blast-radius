@@ -17,7 +17,7 @@ RUN python -c 'import urllib.request; url="https://codeload.github.com/tobymao/s
     && rm /tmp/sqlglot.tar.gz \
     && python -m compileall -q -j 4 /opt/sqlglot/sqlglot /opt/sqlglot/tests
 
-COPY selector.py impact.py patches.py schedule.py verify.py dependencies.json.gz ./
+COPY selector.py impact.py patches.py schedule.py scalars.py parser_guards.py verify.py dependencies.json.gz ./
 
 ENV HOME=/tmp
 USER 65534:65534

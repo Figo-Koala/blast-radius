@@ -55,3 +55,19 @@ def schedule(selection, weights):
         if cost < best_cost:
             best_cost, best_workers = cost, workers
     return best_cost, best_workers
+
+
+
+def fill_headroom(workers, reserve, weights):
+    """Add plausible dependents without increasing the worker count or peak."""
+    if not workers:
+        return
+    loads = [sum(weights[test] for test in worker) for worker in workers]
+    peak = max(loads)
+    for test in sorted(reserve, key=lambda pos: (weights[pos], pos)):
+        lightest = min(range(len(loads)), key=loads.__getitem__)
+        after = loads[lightest] + weights[test]
+        if after > peak:
+            break
+        workers[lightest].append(test)
+        loads[lightest] = after

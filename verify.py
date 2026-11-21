@@ -66,7 +66,10 @@ def run_probe(root, changes, probe, deadline):
                 except (ValueError, KeyError):
                     # A timed-out child may have been killed during the final write.
                     continue
-        return outcomes["pass"], outcomes["fail"], outcomes["file"], outcomes["collected"]
+        collected = outcomes["collected"]
+        if "*" in collected:
+            collected = {"*"}
+        return outcomes["pass"], outcomes["fail"], outcomes["file"], collected
 
 
 def child(plan, report):
@@ -81,6 +84,8 @@ def child(plan, report):
         def emit(kind, name):
             log.write(json.dumps([kind, name], separators=(",", ":")) + "\n")
 
+        requested_files = set(files)
+
         class Results:
             def __init__(self):
                 self.passed = set()
@@ -88,8 +93,11 @@ def child(plan, report):
                 self.skipped = set()
 
             def pytest_collectreport(self, report):
+                path = report.nodeid.split("::", 1)[0]
                 if report.failed:
-                    emit("file", report.nodeid.split("::", 1)[0])
+                    emit("file", path)
+                elif report.nodeid == path and path in requested_files:
+                    emit("collected", path)
 
             def pytest_collection_modifyitems(self, config, items):
                 retained = [item for item in items if item.nodeid in wanted]

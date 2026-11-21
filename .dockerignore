@@ -1,0 +1,11 @@
+*
+!Dockerfile
+!requirements.lock
+!selector.py
+!impact.py
+!patches.py
+!schedule.py
+!scalars.py
+!parser_guards.py
+!verify.py
+!dependencies.json.gz
